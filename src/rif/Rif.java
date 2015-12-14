@@ -3,6 +3,7 @@ package rif;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -65,11 +66,11 @@ public class Rif {
 		return null;
 	}
 
-	public static HashMap<String, String> getDataRif(String rif){	    
+	public static HashMap<String, Object> getDataRif(String rif){	    
 		Document doc = getXMLData(URL + rif);
 
         if (doc != null){
-        	HashMap<String, String> datos = new HashMap<String, String>();
+        	HashMap<String,Object> datos = new HashMap<String, Object>();
         	doc.getDocumentElement().normalize();
         	NodeList data = (NodeList) doc.getChildNodes().item(0); // rif:Rif  -> Root
         	datos.put("RIF", rif);
@@ -79,10 +80,13 @@ public class Rif {
         	if (name.length>1){
             	datos.put(NOMBRE_COMERCIAL, name[1].replace(")", ""));
         	}
+        	else{
+        		datos.put(NOMBRE_COMERCIAL, "");
+        	}
         	
-        	datos.put(AGENTE_RETENCION, data.item(1).getTextContent().equalsIgnoreCase("NO")?"NO":"SI");
-        	datos.put(CONTRIBUYENTE, data.item(2).getTextContent().equalsIgnoreCase("NO")?"NO":"SI");
-        	datos.put(TASA, data.item(3).getTextContent());
+        	datos.put(AGENTE_RETENCION, data.item(1).getTextContent().equalsIgnoreCase("SI"));
+        	datos.put(CONTRIBUYENTE, data.item(2).getTextContent().equalsIgnoreCase("SI"));
+        	datos.put(TASA, new BigDecimal(data.item(3).getTextContent()));
         	
         	return datos;
         }
