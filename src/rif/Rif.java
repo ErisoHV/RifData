@@ -1,95 +1,143 @@
 package rif;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.math.BigDecimal;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.HashMap;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 
 public class Rif {
 	
-	private static String URL = "http://contribuyente.seniat.gob.ve/getContribuyente/getrif?rif=";
-	public static String NOMBRE = "Nombre";
-	public static String NOMBRE_COMERCIAL = "NombreComercial";
-	public static String AGENTE_RETENCION = "AgenteDeRetencion";
-	public static String CONTRIBUYENTE = "Contribuyente";
-	public static String TASA = "Tasa";
+	private static final long serialVersionUID = 1L;
 	
-	
-	private static Document getXMLData (String urlRif){
-		URL url;
-		try {
-			url = new URL(urlRif);
-			 URLConnection uc = null;
-				try {
-						uc = url.openConnection();
-						uc.connect();
-						InputStreamReader input = new InputStreamReader(uc.getInputStream());
+	private String RifNo;
+	private String Nombre;
+	private String NombreComercial;
+	private Boolean EsAgenteRetencion;
+	private Boolean EsContribuyente;
+	private BigDecimal TasaRetencion;
 
-					    BufferedReader in = new BufferedReader(input);
-					    
-					    String inputLine;
-					    String content = "";
-					    while ((inputLine = in.readLine()) != null) {
-					        content += inputLine;
-					    }
-					    in.close();
-					    
-					    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();  
-				        DocumentBuilder builder;  
-				        Document doc = null;
-				        try 
-				        {  
-				            builder = factory.newDocumentBuilder();  
-				            doc = (Document) builder.parse( new InputSource( new StringReader( content ) ) ); 
-				            return doc;
-				        } catch (Exception e) {  
-				            e.printStackTrace();  
-				        } 
-				} catch (Exception e1) {
-					return null;
-				}
-		} catch (MalformedURLException e2) {
-			System.out.println("URL mal formada");
-		}
-	   
-		return null;
+
+	/**
+	 * Empty constructor
+	 */
+	public Rif() {
+		Nombre = "";
+		NombreComercial = "";
+		EsAgenteRetencion = false;
+		EsContribuyente = false;
+		TasaRetencion = new BigDecimal(0);
+	}
+	
+	
+	/**
+	 * @param nombre
+	 * @param nombreComercial
+	 * @param esAgenteRetencion
+	 * @param esContribuyente
+	 * @param tasaRetencion
+	 */
+	public Rif(String nombre, String nombreComercial,
+			Boolean esAgenteRetencion, Boolean esContribuyente,
+			BigDecimal tasaRetencion) {
+		Nombre = nombre;
+		NombreComercial = nombreComercial;
+		EsAgenteRetencion = esAgenteRetencion;
+		EsContribuyente = esContribuyente;
+		TasaRetencion = tasaRetencion;
+	}
+	
+	/**
+	 * @return the rifNo
+	 */
+	public String getRifNo() {
+		return RifNo;
 	}
 
-	public static HashMap<String, Object> getDataRif(String rif){	    
-		Document doc = getXMLData(URL + rif);
 
-        if (doc != null){
-        	HashMap<String,Object> datos = new HashMap<String, Object>();
-        	doc.getDocumentElement().normalize();
-        	NodeList data = (NodeList) doc.getChildNodes().item(0); // rif:Rif  -> Root
-        	datos.put("RIF", rif);
+	/**
+	 * @param rifNo the rifNo to set
+	 */
+	public void setRifNo(String rifNo) {
+		RifNo = rifNo;
+	}
 
-        	String name[] = data.item(0).getTextContent().split("\\("); //rif:Nombre        	
-        	datos.put(NOMBRE, name[0]);
-        	if (name.length>1){
-            	datos.put(NOMBRE_COMERCIAL, name[1].replace(")", ""));
-        	}
-        	else{
-        		datos.put(NOMBRE_COMERCIAL, "");
-        	}
-        	
-        	datos.put(AGENTE_RETENCION, data.item(1).getTextContent().equalsIgnoreCase("SI"));
-        	datos.put(CONTRIBUYENTE, data.item(2).getTextContent().equalsIgnoreCase("SI"));
-        	datos.put(TASA, new BigDecimal(data.item(3).getTextContent()));
-        	
-        	return datos;
-        }
-        return null;
-      }
+	
+	/**
+	 * @return the nombre
+	 */
+	public String getNombre() {
+		return Nombre;
+	}
+	
+	/**
+	 * @param nombre the nombre to set
+	 */
+	public void setNombre(String nombre) {
+		Nombre = nombre;
+	}
+	
+	/**
+	 * @return the nombreComercial
+	 */
+	public String getNombreComercial() {
+		return NombreComercial;
+	}
+	
+	/**
+	 * @param nombreComercial the nombreComercial to set
+	 */
+	public void setNombreComercial(String nombreComercial) {
+		NombreComercial = nombreComercial;
+	}
+	
+	/**
+	 * @return the esAgenteRetencion
+	 */
+	public Boolean getEsAgenteRetencion() {
+		return EsAgenteRetencion;
+	}
+	
+	/**
+	 * @param esAgenteRetencion the esAgenteRetencion to set
+	 */
+	public void setEsAgenteRetencion(Boolean esAgenteRetencion) {
+		EsAgenteRetencion = esAgenteRetencion;
+	}
+	
+	/**
+	 * @return the esContribuyente
+	 */
+	public Boolean getEsContribuyente() {
+		return EsContribuyente;
+	}
+	
+	/**
+	 * @param esContribuyente the esContribuyente to set
+	 */
+	public void setEsContribuyente(Boolean esContribuyente) {
+		EsContribuyente = esContribuyente;
+	}
+	
+	/**
+	 * @return the tasaRetencion
+	 */
+	public BigDecimal getTasaRetencion() {
+		return TasaRetencion;
+	}
+	
+	/**
+	 * @param tasaRetencion the tasaRetencion to set
+	 */
+	public void setTasaRetencion(BigDecimal tasaRetencion) {
+		TasaRetencion = tasaRetencion;
+	}
+	
+	
+	@Override
+	public String toString() {
+		return "Rif [RifNo=" + RifNo + ", Nombre=" + Nombre
+				+ ", NombreComercial=" + NombreComercial
+				+ ", EsAgenteRetencion=" + EsAgenteRetencion
+				+ ", EsContribuyente=" + EsContribuyente + ", TasaRetencion="
+				+ TasaRetencion + "]";
+	}
+	
 }
